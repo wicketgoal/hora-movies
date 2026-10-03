@@ -1,0 +1,24 @@
+[
+  {
+    "id": "movie-001",
+    "title": "The Dark Knight",
+    "year": 2008,
+    "genre": ["Action", "Crime", "Drama"],
+    "poster": "https://placehold.co/500x750/111111/ffffff?text=The+Dark+Knight",
+    "backdrop": "https://placehold.co/1920x1080/111111/ffffff?text=The+Dark+Knight",
+    "rating": "9.0",
+    "duration": "2h 32m",
+    "description": "A masked vigilante faces a dangerous criminal mastermind who throws Gotham City into chaos."
+  },
+  {
+    "id": "movie-002",
+    "title": "Inception",
+    "year": 2010,
+    "genre": ["Action", "Sci-Fi", "Thriller"],
+    "poster": "https://placehold.co/500x750/111111/ffffff?text=Inception",
+    "backdrop": "https://placehold.co/1920x1080/111111/ffffff?text=Inception",
+    "rating": "8.8",
+    "duration": "2h 28m",
+    "description": "A skilled extractor who steals secrets through dreams is given an opportunity to erase his past."
+  }
+]
