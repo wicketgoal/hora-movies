@@ -1,114 +1,1350 @@
-export default {
-  async fetch(request, env) {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    const url = new URL(request.url);
+<title>HORA Movies — Stream Manager</title>
 
-    // CORS
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type"
-    };
+<style>
 
-    // Handle preflight
-    if (request.method === "OPTIONS") {
-      return new Response(null, {
-        headers: corsHeaders
-      });
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #080808;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.hm-admin {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+}
+
+/* HEADER */
+
+.hm-admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.hm-logo {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.hm-logo span {
+  color: #e50914;
+}
+
+.hm-admin-label {
+  color: #888;
+  font-size: 13px;
+}
+
+/* CARDS */
+
+.hm-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.hm-card-title {
+  margin: 0 0 20px;
+  font-size: 18px;
+}
+
+.hm-card-subtitle {
+  color: #777;
+  font-size: 13px;
+  margin-top: -12px;
+  margin-bottom: 20px;
+}
+
+/* FORM */
+
+.hm-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.hm-input,
+.hm-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 13px;
+  border-radius: 7px;
+  border: 1px solid #2b2b2b;
+  background: #080808;
+  color: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+.hm-input:focus,
+.hm-select:focus {
+  border-color: #e50914;
+}
+
+.hm-movie-select {
+  margin-bottom: 20px;
+}
+
+/* SERVER */
+
+.hm-server-box {
+  border: 1px solid #242424;
+  background: #0c0c0c;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 15px;
+}
+
+.hm-server-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.hm-server-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hm-server-status {
+  font-size: 11px;
+  color: #777;
+}
+
+.hm-server-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 15px;
+}
+
+/* BUTTONS */
+
+.hm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.hm-btn {
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.hm-btn-primary {
+  background: #e50914;
+  color: #fff;
+}
+
+.hm-btn-primary:hover {
+  background: #f21a25;
+}
+
+.hm-btn-secondary {
+  background: #222;
+  color: #fff;
+}
+
+.hm-btn-secondary:hover {
+  background: #2c2c2c;
+}
+
+.hm-btn-danger {
+  background: #241010;
+  color: #ff6b6b;
+}
+
+/* JSON */
+
+.hm-json {
+  width: 100%;
+  min-height: 280px;
+  resize: vertical;
+  background: #050505;
+  color: #d8d8d8;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 15px;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+}
+
+/* STATUS */
+
+.hm-message {
+  display: none;
+  padding: 13px 15px;
+  border-radius: 7px;
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+.hm-message.success {
+  display: block;
+  background: #0d2113;
+  color: #7cff9b;
+  border: 1px solid #164b25;
+}
+
+.hm-message.error {
+  display: block;
+  background: #250d0d;
+  color: #ff8585;
+  border: 1px solid #541818;
+}
+
+/* MOVIE INFO */
+
+.hm-movie-info {
+  display: none;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 8px;
+  background: #0b0b0b;
+  border: 1px solid #222;
+}
+
+.hm-movie-info img {
+  width: 55px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.hm-movie-info-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hm-movie-info-id {
+  color: #777;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+
+  .hm-admin {
+    padding: 20px 12px 40px;
+  }
+
+  .hm-admin-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hm-card {
+    padding: 17px;
+  }
+
+  .hm-server-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .hm-actions {
+    flex-direction: column;
+  }
+
+  .hm-btn {
+    width: 100%;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="hm-admin">
+
+  <!-- HEADER -->
+
+  <header class="hm-admin-header">
+
+    <div class="hm-logo">
+      HORA <span>Movies</span>
+    </div>
+
+    <div class="hm-admin-label">
+      STREAM MANAGER
+    </div>
+
+  </header>
+
+
+  <!-- MOVIE -->
+
+  <div class="hm-card">
+
+    <h2 class="hm-card-title">
+      Select Movie
+    </h2>
+
+    <p class="hm-card-subtitle">
+      Movies are loaded from your latest.json file.
+    </p>
+
+    <label class="hm-label">
+      Movie
+    </label>
+
+    <select
+      id="movieSelect"
+      class="hm-select hm-movie-select"
+    >
+
+      <option value="">
+        Loading movies...
+      </option>
+
+    </select>
+
+
+    <div
+      id="movieInfo"
+      class="hm-movie-info"
+    >
+
+      <img
+        id="moviePoster"
+        src=""
+        alt=""
+      >
+
+      <div>
+
+        <div
+          id="movieTitle"
+          class="hm-movie-info-title"
+        >
+        </div>
+
+        <div
+          id="movieId"
+          class="hm-movie-info-id"
+        >
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- SERVERS -->
+
+  <div class="hm-card">
+
+    <h2 class="hm-card-title">
+      Stream Servers
+    </h2>
+
+    <p class="hm-card-subtitle">
+      Add up to three authorized stream sources for this movie.
+    </p>
+
+
+    <!-- SERVER 1 -->
+
+    <div class="hm-server-box">
+
+      <div class="hm-server-header">
+
+        <div class="hm-server-title">
+          Server 1
+        </div>
+
+        <div
+          id="server1Status"
+          class="hm-server-status"
+        >
+          Empty
+        </div>
+
+      </div>
+
+      <div class="hm-server-grid">
+
+        <div>
+
+          <label class="hm-label">
+            Type
+          </label>
+
+          <select
+            id="server1Type"
+            class="hm-select"
+          >
+
+            <option value="iframe">
+              IFRAME
+            </option>
+
+            <option value="m3u8">
+              M3U8
+            </option>
+
+          </select>
+
+        </div>
+
+        <div>
+
+          <label class="hm-label">
+            Stream URL
+          </label>
+
+          <input
+            id="server1Url"
+            class="hm-input"
+            type="url"
+            placeholder="https://..."
+          >
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SERVER 2 -->
+
+    <div class="hm-server-box">
+
+      <div class="hm-server-header">
+
+        <div class="hm-server-title">
+          Server 2
+        </div>
+
+        <div
+          id="server2Status"
+          class="hm-server-status"
+        >
+          Empty
+        </div>
+
+      </div>
+
+      <div class="hm-server-grid">
+
+        <div>
+
+          <label class="hm-label">
+            Type
+          </label>
+
+          <select
+            id="server2Type"
+            class="hm-select"
+          >
+
+            <option value="iframe">
+              IFRAME
+            </option>
+
+            <option value="m3u8">
+              M3U8
+            </option>
+
+          </select>
+
+        </div>
+
+        <div>
+
+          <label class="hm-label">
+            Stream URL
+          </label>
+
+          <input
+            id="server2Url"
+            class="hm-input"
+            type="url"
+            placeholder="https://..."
+          >
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SERVER 3 -->
+
+    <div class="hm-server-box">
+
+      <div class="hm-server-header">
+
+        <div class="hm-server-title">
+          Server 3
+        </div>
+
+        <div
+          id="server3Status"
+          class="hm-server-status"
+        >
+          Empty
+        </div>
+
+      </div>
+
+      <div class="hm-server-grid">
+
+        <div>
+
+          <label class="hm-label">
+            Type
+          </label>
+
+          <select
+            id="server3Type"
+            class="hm-select"
+          >
+
+            <option value="iframe">
+              IFRAME
+            </option>
+
+            <option value="m3u8">
+              M3U8
+            </option>
+
+          </select>
+
+        </div>
+
+        <div>
+
+          <label class="hm-label">
+            Stream URL
+          </label>
+
+          <input
+            id="server3Url"
+            class="hm-input"
+            type="url"
+            placeholder="https://..."
+          >
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="hm-actions">
+
+      <button
+        id="generateBtn"
+        class="hm-btn hm-btn-primary"
+      >
+        Generate Stream Data
+      </button>
+
+      <button
+        id="clearBtn"
+        class="hm-btn hm-btn-secondary"
+      >
+        Clear
+      </button>
+
+    </div>
+
+
+    <div
+      id="message"
+      class="hm-message"
+    ></div>
+
+  </div>
+
+
+  <!-- JSON OUTPUT -->
+
+  <div class="hm-card">
+
+    <h2 class="hm-card-title">
+      Stream Data
+    </h2>
+
+    <p class="hm-card-subtitle">
+      This is the data that will eventually be saved by the Stream Manager.
+    </p>
+
+    <textarea
+      id="jsonOutput"
+      class="hm-json"
+      spellcheck="false"
+      placeholder="Stream JSON will appear here..."
+    ></textarea>
+
+
+    <div class="hm-actions">
+
+      <button
+        id="copyBtn"
+        class="hm-btn hm-btn-secondary"
+      >
+        Copy JSON
+      </button>
+
+      <button
+        id="downloadBtn"
+        class="hm-btn hm-btn-primary"
+      >
+        Download streams.json
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+// =====================================================
+// CONFIG
+// =====================================================
+
+const LATEST_API =
+  'https://hora-movies.pages.dev/latest.json';
+
+
+// =====================================================
+// ELEMENTS
+// =====================================================
+
+const movieSelect =
+  document.getElementById(
+    'movieSelect'
+  );
+
+const movieInfo =
+  document.getElementById(
+    'movieInfo'
+  );
+
+const moviePoster =
+  document.getElementById(
+    'moviePoster'
+  );
+
+const movieTitle =
+  document.getElementById(
+    'movieTitle'
+  );
+
+const movieId =
+  document.getElementById(
+    'movieId'
+  );
+
+const jsonOutput =
+  document.getElementById(
+    'jsonOutput'
+  );
+
+const message =
+  document.getElementById(
+    'message'
+  );
+
+
+// =====================================================
+// MOVIE DATA
+// =====================================================
+
+let movies = [];
+
+let streamDatabase = {};
+
+
+// =====================================================
+// LOAD MOVIES
+// =====================================================
+
+async function loadMovies() {
+
+  try {
+
+    const response =
+      await fetch(
+        LATEST_API,
+        {
+          cache: 'no-store'
+        }
+      );
+
+    if (!response.ok) {
+
+      throw new Error(
+        'Unable to load latest.json'
+      );
+
     }
 
-    // Movie endpoint
-    if (url.pathname.startsWith("/movie/")) {
+    movies =
+      await response.json();
 
-      const tmdbId = url.pathname.split("/")[2];
 
-      if (!tmdbId) {
-        return new Response(
-          JSON.stringify({
-            error: "TMDB movie ID is required"
-          }),
-          {
-            status: 400,
-            headers: {
-              "Content-Type": "application/json",
-              ...corsHeaders
-            }
-          }
-        );
-      }
+    movieSelect.innerHTML = `
+      <option value="">
+        Select a movie...
+      </option>
+    `;
 
-      try {
 
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${tmdbId}?language=en-US`,
-          {
-            headers: {
-              "Authorization": `Bearer ${env.TMDB_TOKEN}`,
-              "accept": "application/json"
-            }
-          }
+    movies.forEach(function(movie) {
+
+      const option =
+        document.createElement(
+          'option'
         );
 
-        if (!response.ok) {
+      option.value =
+        movie.id;
 
-          return new Response(
-            JSON.stringify({
-              error: "TMDB request failed",
-              status: response.status
-            }),
-            {
-              status: response.status,
-              headers: {
-                "Content-Type": "application/json",
-                ...corsHeaders
-              }
-            }
-          );
+      option.textContent =
+        movie.id;
 
-        }
+      option.dataset.tmdb =
+        movie.tmdb_id;
 
-        const movie = await response.json();
+      movieSelect.appendChild(
+        option
+      );
 
-        return new Response(
-          JSON.stringify(movie),
-          {
-            headers: {
-              "Content-Type": "application/json",
-              ...corsHeaders,
-              "Cache-Control": "public, max-age=3600"
-            }
-          }
-        );
+    });
 
-      } catch (error) {
 
-        return new Response(
-          JSON.stringify({
-            error: "Server error"
-          }),
-          {
-            status: 500,
-            headers: {
-              "Content-Type": "application/json",
-              ...corsHeaders
-            }
-          }
-        );
+    showMessage(
+      'Movies loaded successfully.',
+      'success'
+    );
 
-      }
-    }
 
-    return new Response(
-      JSON.stringify({
-        message: "HORA Movies API is working"
-      }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-          ...corsHeaders
-        }
-      }
+  } catch (error) {
+
+    console.error(error);
+
+    movieSelect.innerHTML = `
+      <option value="">
+        Failed to load movies
+      </option>
+    `;
+
+    showMessage(
+      'Could not load latest.json.',
+      'error'
     );
 
   }
-};
+
+}
+
+
+// =====================================================
+// MOVIE SELECT
+// =====================================================
+
+movieSelect.addEventListener(
+  'change',
+  function() {
+
+    const selectedId =
+      movieSelect.value;
+
+    if (!selectedId) {
+
+      movieInfo.style.display =
+        'none';
+
+      clearServerFields();
+
+      return;
+
+    }
+
+
+    const movie =
+      movies.find(function(item) {
+
+        return String(item.id) ===
+          String(selectedId);
+
+      });
+
+
+    if (!movie) {
+      return;
+    }
+
+
+    movieInfo.style.display =
+      'flex';
+
+
+    movieTitle.textContent =
+      movie.id;
+
+
+    movieId.textContent =
+      'Movie ID: ' +
+      movie.id +
+      ' • TMDB ID: ' +
+      movie.tmdb_id;
+
+
+    moviePoster.src =
+      movie.tmdb_id
+        ? 'https://image.tmdb.org/t/p/w185' +
+          '/placeholder'
+        : '';
+
+
+    /*
+      We don't expose the TMDB token here.
+      Poster is optional in this manager.
+    */
+
+
+    loadExistingStreams(
+      movie.id
+    );
+
+  }
+);
+
+
+// =====================================================
+// LOAD EXISTING STREAMS
+// =====================================================
+
+function loadExistingStreams(id) {
+
+  const existing =
+    streamDatabase[id];
+
+  if (!existing) {
+
+    clearServerFields();
+
+    return;
+
+  }
+
+
+  setServer(
+    1,
+    existing.server1
+  );
+
+  setServer(
+    2,
+    existing.server2
+  );
+
+  setServer(
+    3,
+    existing.server3
+  );
+
+}
+
+
+// =====================================================
+// SET SERVER
+// =====================================================
+
+function setServer(
+  number,
+  server
+) {
+
+  const type =
+    document.getElementById(
+      'server' +
+      number +
+      'Type'
+    );
+
+  const url =
+    document.getElementById(
+      'server' +
+      number +
+      'Url'
+    );
+
+
+  if (!server) {
+
+    type.value =
+      'iframe';
+
+    url.value =
+      '';
+
+    updateServerStatus(
+      number,
+      false
+    );
+
+    return;
+
+  }
+
+
+  type.value =
+    server.type ||
+    'iframe';
+
+  url.value =
+    server.url ||
+    '';
+
+  updateServerStatus(
+    number,
+    Boolean(server.url)
+  );
+
+}
+
+
+// =====================================================
+// CLEAR
+// =====================================================
+
+function clearServerFields() {
+
+  for (
+    let number = 1;
+    number <= 3;
+    number++
+  ) {
+
+    document.getElementById(
+      'server' +
+      number +
+      'Type'
+    ).value =
+      'iframe';
+
+    document.getElementById(
+      'server' +
+      number +
+      'Url'
+    ).value =
+      '';
+
+    updateServerStatus(
+      number,
+      false
+    );
+
+  }
+
+  jsonOutput.value =
+    '';
+
+}
+
+
+// =====================================================
+// GENERATE
+// =====================================================
+
+document.getElementById(
+  'generateBtn'
+).addEventListener(
+  'click',
+  function() {
+
+    const selectedId =
+      movieSelect.value;
+
+    if (!selectedId) {
+
+      showMessage(
+        'Please select a movie first.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    const movieStreams = {};
+
+
+    for (
+      let number = 1;
+      number <= 3;
+      number++
+    ) {
+
+      const type =
+        document.getElementById(
+          'server' +
+          number +
+          'Type'
+        ).value;
+
+      const url =
+        document.getElementById(
+          'server' +
+          number +
+          'Url'
+        ).value.trim();
+
+
+      if (url) {
+
+        movieStreams[
+          'server' + number
+        ] = {
+
+          name:
+            'Server ' +
+            number,
+
+          type:
+            type,
+
+          url:
+            url
+
+        };
+
+      }
+
+    }
+
+
+    streamDatabase[
+      selectedId
+    ] =
+      movieStreams;
+
+
+    const output =
+      {};
+
+    output[
+      selectedId
+    ] =
+      movieStreams;
+
+
+    jsonOutput.value =
+      JSON.stringify(
+        output,
+        null,
+        2
+      );
+
+
+    for (
+      let number = 1;
+      number <= 3;
+      number++
+    ) {
+
+      updateServerStatus(
+        number,
+        Boolean(
+          movieStreams[
+            'server' + number
+          ]
+        )
+      );
+
+    }
+
+
+    showMessage(
+      'Stream data generated successfully.',
+      'success'
+    );
+
+  }
+);
+
+
+// =====================================================
+// COPY
+// =====================================================
+
+document.getElementById(
+  'copyBtn'
+).addEventListener(
+  'click',
+  async function() {
+
+    if (!jsonOutput.value) {
+
+      showMessage(
+        'Generate the stream data first.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    try {
+
+      await navigator.clipboard.writeText(
+        jsonOutput.value
+      );
+
+      showMessage(
+        'JSON copied to clipboard.',
+        'success'
+      );
+
+    } catch (error) {
+
+      jsonOutput.select();
+
+      document.execCommand(
+        'copy'
+      );
+
+      showMessage(
+        'JSON copied.',
+        'success'
+      );
+
+    }
+
+  }
+);
+
+
+// =====================================================
+// DOWNLOAD
+// =====================================================
+
+document.getElementById(
+  'downloadBtn'
+).addEventListener(
+  'click',
+  function() {
+
+    if (!jsonOutput.value) {
+
+      showMessage(
+        'Generate the stream data first.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    const blob =
+      new Blob(
+        [
+          JSON.stringify(
+            streamDatabase,
+            null,
+            2
+          )
+        ],
+        {
+          type:
+            'application/json'
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const link =
+      document.createElement(
+        'a'
+      );
+
+    link.href =
+      url;
+
+    link.download =
+      'streams.json';
+
+    document.body.appendChild(
+      link
+    );
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(
+      url
+    );
+
+
+    showMessage(
+      'streams.json downloaded.',
+      'success'
+    );
+
+  }
+);
+
+
+// =====================================================
+// CLEAR BUTTON
+// =====================================================
+
+document.getElementById(
+  'clearBtn'
+).addEventListener(
+  'click',
+  function() {
+
+    if (
+      !confirm(
+        'Clear the current server information?'
+      )
+    ) {
+      return;
+    }
+
+    clearServerFields();
+
+    showMessage(
+      'Server fields cleared.',
+      'success'
+    );
+
+  }
+);
+
+
+// =====================================================
+// STATUS
+// =====================================================
+
+function updateServerStatus(
+  number,
+  active
+) {
+
+  const status =
+    document.getElementById(
+      'server' +
+      number +
+      'Status'
+    );
+
+
+  if (active) {
+
+    status.textContent =
+      'Configured';
+
+    status.style.color =
+      '#70ff91';
+
+  } else {
+
+    status.textContent =
+      'Empty';
+
+    status.style.color =
+      '#777';
+
+  }
+
+}
+
+
+// =====================================================
+// MESSAGE
+// =====================================================
+
+function showMessage(
+  text,
+  type
+) {
+
+  message.textContent =
+    text;
+
+  message.className =
+    'hm-message ' +
+    type;
+
+  setTimeout(
+    function() {
+
+      message.className =
+        'hm-message';
+
+    },
+    3500
+  );
+
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+loadMovies();
+
+</script>
+
+</body>
+</html>
