@@ -3,7 +3,7 @@
     "server1": {
       "name": "Server 1",
       "type": "iframe",
-      "url": ""
+      "url": "https://wicket-goal.pages.dev/htstar/"
     },
     "server2": {
       "name": "Server 2",
