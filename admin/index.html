@@ -1,1349 +1,1155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HORA Movies — Stream Manager</title>
+  <title>HORA Movies — Stream Manager</title>
 
-<style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    body {
+      margin: 0;
+      background: #080b10;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-body {
-  margin: 0;
-  background: #080808;
-  color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
-}
+    .hm-admin {
+      width: min(1100px, calc(100% - 30px));
+      margin: 40px auto;
+    }
 
-.hm-admin {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 30px 20px 60px;
-}
+    .hm-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
 
-/* HEADER */
+    .hm-logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
 
-.hm-admin-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 30px;
-}
+    .hm-logo span {
+      color: #1597ff;
+    }
 
-.hm-logo {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -1px;
-}
+    .hm-subtitle {
+      color: #777;
+      font-size: 13px;
+      margin-top: 5px;
+    }
 
-.hm-logo span {
-  color: #e50914;
-}
+    .hm-refresh {
+      border: 1px solid #252b33;
+      background: #11161d;
+      color: #ccc;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-.hm-admin-label {
-  color: #888;
-  font-size: 13px;
-}
+    .hm-refresh:hover {
+      background: #181e26;
+    }
 
-/* CARDS */
+    .hm-section {
+      margin-bottom: 35px;
+    }
 
-.hm-card {
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-}
+    .hm-section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #20252c;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+    }
 
-.hm-card-title {
-  margin: 0 0 20px;
-  font-size: 18px;
-}
+    .hm-section-title h2 {
+      margin: 0;
+      font-size: 18px;
+    }
 
-.hm-card-subtitle {
-  color: #777;
-  font-size: 13px;
-  margin-top: -12px;
-  margin-bottom: 20px;
-}
+    .hm-count {
+      color: #777;
+      font-size: 13px;
+    }
 
-/* FORM */
+    .hm-movie-list {
+      display: grid;
+      gap: 10px;
+    }
 
-.hm-label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 13px;
-  color: #aaa;
-}
+    .hm-movie {
+      background: #10151c;
+      border: 1px solid #202731;
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-.hm-input,
-.hm-select {
-  width: 100%;
-  height: 44px;
-  padding: 0 13px;
-  border-radius: 7px;
-  border: 1px solid #2b2b2b;
-  background: #080808;
-  color: #fff;
-  outline: none;
-  font-size: 14px;
-}
+    .hm-movie-info {
+      flex: 1;
+      min-width: 0;
+    }
 
-.hm-input:focus,
-.hm-select:focus {
-  border-color: #e50914;
-}
+    .hm-movie-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
 
-.hm-movie-select {
-  margin-bottom: 20px;
-}
+    .hm-movie-id {
+      color: #666;
+      font-size: 12px;
+    }
 
-/* SERVER */
+    .hm-servers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
 
-.hm-server-box {
-  border: 1px solid #242424;
-  background: #0c0c0c;
-  border-radius: 10px;
-  padding: 18px;
-  margin-bottom: 15px;
-}
+    .hm-server-status {
+      font-size: 11px;
+      padding: 4px 7px;
+      border-radius: 5px;
+      background: #181d24;
+      color: #666;
+    }
 
-.hm-server-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
+    .hm-server-status.active {
+      color: #6ee7a2;
+      background: rgba(50, 180, 110, 0.10);
+    }
 
-.hm-server-title {
-  font-size: 15px;
-  font-weight: 700;
-}
+    .hm-action {
+      flex-shrink: 0;
+      border: 0;
+      background: #1597ff;
+      color: white;
+      padding: 9px 15px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 600;
+    }
 
-.hm-server-status {
-  font-size: 11px;
-  color: #777;
-}
+    .hm-action:hover {
+      background: #087fdc;
+    }
 
-.hm-server-grid {
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 15px;
-}
+    .hm-empty {
+      padding: 25px;
+      text-align: center;
+      background: #10151c;
+      border: 1px dashed #282f38;
+      border-radius: 10px;
+      color: #777;
+    }
 
-/* BUTTONS */
+    /* EDITOR */
 
-.hm-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-}
+    .hm-editor {
+      display: none;
+      background: #10151c;
+      border: 1px solid #29313b;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 35px;
+    }
 
-.hm-btn {
-  height: 44px;
-  padding: 0 20px;
-  border: 0;
-  border-radius: 7px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-}
+    .hm-editor.active {
+      display: block;
+    }
 
-.hm-btn-primary {
-  background: #e50914;
-  color: #fff;
-}
+    .hm-editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
 
-.hm-btn-primary:hover {
-  background: #f21a25;
-}
+    .hm-editor-title {
+      margin: 0;
+      font-size: 20px;
+    }
 
-.hm-btn-secondary {
-  background: #222;
-  color: #fff;
-}
+    .hm-close {
+      border: 1px solid #303740;
+      background: transparent;
+      color: #aaa;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-.hm-btn-secondary:hover {
-  background: #2c2c2c;
-}
+    .hm-server-box {
+      border: 1px solid #252d37;
+      background: #0b0f14;
+      border-radius: 9px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
 
-.hm-btn-danger {
-  background: #241010;
-  color: #ff6b6b;
-}
+    .hm-server-box h3 {
+      margin: 0 0 15px;
+      font-size: 14px;
+      color: #1597ff;
+    }
 
-/* JSON */
+    .hm-fields {
+      display: grid;
+      grid-template-columns: 180px 160px 1fr;
+      gap: 10px;
+    }
 
-.hm-json {
-  width: 100%;
-  min-height: 280px;
-  resize: vertical;
-  background: #050505;
-  color: #d8d8d8;
-  border: 1px solid #222;
-  border-radius: 8px;
-  padding: 15px;
-  font-family: Consolas, Monaco, monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  outline: none;
-}
+    .hm-field label {
+      display: block;
+      color: #777;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
 
-/* STATUS */
+    .hm-field input,
+    .hm-field select {
+      width: 100%;
+      border: 1px solid #2a313a;
+      background: #151a21;
+      color: white;
+      padding: 10px;
+      border-radius: 6px;
+      outline: none;
+    }
 
-.hm-message {
-  display: none;
-  padding: 13px 15px;
-  border-radius: 7px;
-  margin-top: 15px;
-  font-size: 13px;
-}
+    .hm-field input:focus,
+    .hm-field select:focus {
+      border-color: #1597ff;
+    }
 
-.hm-message.success {
-  display: block;
-  background: #0d2113;
-  color: #7cff9b;
-  border: 1px solid #164b25;
-}
+    .hm-editor-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
 
-.hm-message.error {
-  display: block;
-  background: #250d0d;
-  color: #ff8585;
-  border: 1px solid #541818;
-}
+    .hm-cancel {
+      border: 1px solid #303740;
+      background: transparent;
+      color: #aaa;
+      padding: 11px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
 
-/* MOVIE INFO */
+    .hm-save {
+      border: 0;
+      background: #1597ff;
+      color: white;
+      padding: 11px 22px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 700;
+    }
 
-.hm-movie-info {
-  display: none;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
-  margin-top: 15px;
-  border-radius: 8px;
-  background: #0b0b0b;
-  border: 1px solid #222;
-}
+    .hm-save:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
 
-.hm-movie-info img {
-  width: 55px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 5px;
-}
+    .hm-status {
+      display: none;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
 
-.hm-movie-info-title {
-  font-size: 15px;
-  font-weight: 700;
-}
+    .hm-status.show {
+      display: block;
+    }
 
-.hm-movie-info-id {
-  color: #777;
-  font-size: 12px;
-  margin-top: 5px;
-}
+    .hm-status.success {
+      background: rgba(50, 180, 110, 0.12);
+      border: 1px solid rgba(50, 180, 110, 0.3);
+      color: #6ee7a2;
+    }
 
-/* RESPONSIVE */
+    .hm-status.error {
+      background: rgba(220, 60, 60, 0.12);
+      border: 1px solid rgba(220, 60, 60, 0.3);
+      color: #ff8888;
+    }
 
-@media (max-width: 700px) {
+    .hm-loading {
+      text-align: center;
+      color: #777;
+      padding: 30px;
+    }
 
-  .hm-admin {
-    padding: 20px 12px 40px;
-  }
+    @media (max-width: 750px) {
 
-  .hm-admin-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+      .hm-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
 
-  .hm-card {
-    padding: 17px;
-  }
+      .hm-movie {
+        align-items: flex-start;
+        flex-direction: column;
+      }
 
-  .hm-server-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
+      .hm-action {
+        width: 100%;
+      }
 
-  .hm-actions {
-    flex-direction: column;
-  }
+      .hm-fields {
+        grid-template-columns: 1fr;
+      }
 
-  .hm-btn {
-    width: 100%;
-  }
+      .hm-editor-actions {
+        flex-direction: column;
+      }
 
-}
+      .hm-save,
+      .hm-cancel {
+        width: 100%;
+      }
 
-</style>
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="hm-admin">
+  <div class="hm-admin">
 
-  <!-- HEADER -->
-
-  <header class="hm-admin-header">
-
-    <div class="hm-logo">
-      HORA <span>Movies</span>
-    </div>
-
-    <div class="hm-admin-label">
-      STREAM MANAGER
-    </div>
-
-  </header>
-
-
-  <!-- MOVIE -->
-
-  <div class="hm-card">
-
-    <h2 class="hm-card-title">
-      Select Movie
-    </h2>
-
-    <p class="hm-card-subtitle">
-      Movies are loaded from your latest.json file.
-    </p>
-
-    <label class="hm-label">
-      Movie
-    </label>
-
-    <select
-      id="movieSelect"
-      class="hm-select hm-movie-select"
-    >
-
-      <option value="">
-        Loading movies...
-      </option>
-
-    </select>
-
-
-    <div
-      id="movieInfo"
-      class="hm-movie-info"
-    >
-
-      <img
-        id="moviePoster"
-        src=""
-        alt=""
-      >
+    <div class="hm-header">
 
       <div>
-
-        <div
-          id="movieTitle"
-          class="hm-movie-info-title"
-        >
+        <div class="hm-logo">
+          HORA <span>Movies</span>
         </div>
 
-        <div
-          id="movieId"
-          class="hm-movie-info-id"
-        >
+        <div class="hm-subtitle">
+          Stream Manager
         </div>
-
       </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- SERVERS -->
-
-  <div class="hm-card">
-
-    <h2 class="hm-card-title">
-      Stream Servers
-    </h2>
-
-    <p class="hm-card-subtitle">
-      Add up to three authorized stream sources for this movie.
-    </p>
-
-
-    <!-- SERVER 1 -->
-
-    <div class="hm-server-box">
-
-      <div class="hm-server-header">
-
-        <div class="hm-server-title">
-          Server 1
-        </div>
-
-        <div
-          id="server1Status"
-          class="hm-server-status"
-        >
-          Empty
-        </div>
-
-      </div>
-
-      <div class="hm-server-grid">
-
-        <div>
-
-          <label class="hm-label">
-            Type
-          </label>
-
-          <select
-            id="server1Type"
-            class="hm-select"
-          >
-
-            <option value="iframe">
-              IFRAME
-            </option>
-
-            <option value="m3u8">
-              M3U8
-            </option>
-
-          </select>
-
-        </div>
-
-        <div>
-
-          <label class="hm-label">
-            Stream URL
-          </label>
-
-          <input
-            id="server1Url"
-            class="hm-input"
-            type="url"
-            placeholder="https://..."
-          >
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- SERVER 2 -->
-
-    <div class="hm-server-box">
-
-      <div class="hm-server-header">
-
-        <div class="hm-server-title">
-          Server 2
-        </div>
-
-        <div
-          id="server2Status"
-          class="hm-server-status"
-        >
-          Empty
-        </div>
-
-      </div>
-
-      <div class="hm-server-grid">
-
-        <div>
-
-          <label class="hm-label">
-            Type
-          </label>
-
-          <select
-            id="server2Type"
-            class="hm-select"
-          >
-
-            <option value="iframe">
-              IFRAME
-            </option>
-
-            <option value="m3u8">
-              M3U8
-            </option>
-
-          </select>
-
-        </div>
-
-        <div>
-
-          <label class="hm-label">
-            Stream URL
-          </label>
-
-          <input
-            id="server2Url"
-            class="hm-input"
-            type="url"
-            placeholder="https://..."
-          >
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- SERVER 3 -->
-
-    <div class="hm-server-box">
-
-      <div class="hm-server-header">
-
-        <div class="hm-server-title">
-          Server 3
-        </div>
-
-        <div
-          id="server3Status"
-          class="hm-server-status"
-        >
-          Empty
-        </div>
-
-      </div>
-
-      <div class="hm-server-grid">
-
-        <div>
-
-          <label class="hm-label">
-            Type
-          </label>
-
-          <select
-            id="server3Type"
-            class="hm-select"
-          >
-
-            <option value="iframe">
-              IFRAME
-            </option>
-
-            <option value="m3u8">
-              M3U8
-            </option>
-
-          </select>
-
-        </div>
-
-        <div>
-
-          <label class="hm-label">
-            Stream URL
-          </label>
-
-          <input
-            id="server3Url"
-            class="hm-input"
-            type="url"
-            placeholder="https://..."
-          >
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- ACTIONS -->
-
-    <div class="hm-actions">
 
       <button
-        id="generateBtn"
-        class="hm-btn hm-btn-primary"
-      >
-        Generate Stream Data
-      </button>
-
-      <button
-        id="clearBtn"
-        class="hm-btn hm-btn-secondary"
-      >
-        Clear
+        class="hm-refresh"
+        onclick="loadMovies()">
+        Refresh
       </button>
 
     </div>
 
 
     <div
-      id="message"
-      class="hm-message"
-    ></div>
-
-  </div>
+      id="status"
+      class="hm-status">
+    </div>
 
 
-  <!-- JSON OUTPUT -->
+    <!-- EDITOR -->
 
-  <div class="hm-card">
+    <div
+      id="editor"
+      class="hm-editor">
 
-    <h2 class="hm-card-title">
-      Stream Data
-    </h2>
+      <div class="hm-editor-header">
 
-    <p class="hm-card-subtitle">
-      This is the data that will eventually be saved by the Stream Manager.
-    </p>
+        <h2
+          id="editorTitle"
+          class="hm-editor-title">
+          Movie
+        </h2>
 
-    <textarea
-      id="jsonOutput"
-      class="hm-json"
-      spellcheck="false"
-      placeholder="Stream JSON will appear here..."
-    ></textarea>
+        <button
+          class="hm-close"
+          onclick="closeEditor()">
+          Close
+        </button>
+
+      </div>
 
 
-    <div class="hm-actions">
+      <div id="serverFields">
 
-      <button
-        id="copyBtn"
-        class="hm-btn hm-btn-secondary"
-      >
-        Copy JSON
-      </button>
+        <!-- SERVER FIELDS GENERATED HERE -->
 
-      <button
-        id="downloadBtn"
-        class="hm-btn hm-btn-primary"
-      >
-        Download streams.json
-      </button>
+      </div>
+
+
+      <div class="hm-editor-actions">
+
+        <button
+          class="hm-cancel"
+          onclick="closeEditor()">
+          Cancel
+        </button>
+
+        <button
+          id="saveButton"
+          class="hm-save"
+          onclick="saveStreams()">
+          Save Streams
+        </button>
+
+      </div>
 
     </div>
 
-  </div>
 
-</div>
+    <!-- MOVIES WITH LINKS -->
+
+    <section class="hm-section">
+
+      <div class="hm-section-title">
+
+        <h2>
+          Movies With Links
+        </h2>
+
+        <span
+          id="withCount"
+          class="hm-count">
+          0
+        </span>
+
+      </div>
+
+      <div
+        id="withLinks"
+        class="hm-movie-list">
+
+        <div class="hm-loading">
+          Loading movies...
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MOVIES WITHOUT LINKS -->
+
+    <section class="hm-section">
+
+      <div class="hm-section-title">
+
+        <h2>
+          Movies Without Links
+        </h2>
+
+        <span
+          id="withoutCount"
+          class="hm-count">
+          0
+        </span>
+
+      </div>
+
+      <div
+        id="withoutLinks"
+        class="hm-movie-list">
+
+        <div class="hm-loading">
+          Loading movies...
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
 
 
 <script>
+//<![CDATA[
 
-// =====================================================
-// CONFIG
-// =====================================================
+const API =
+  'https://hora-movies-api.dailylivescoress.workers.dev';
 
 const LATEST_API =
   'https://hora-movies.pages.dev/latest.json';
 
-
-// =====================================================
-// ELEMENTS
-// =====================================================
-
-const movieSelect =
-  document.getElementById(
-    'movieSelect'
-  );
-
-const movieInfo =
-  document.getElementById(
-    'movieInfo'
-  );
-
-const moviePoster =
-  document.getElementById(
-    'moviePoster'
-  );
-
-const movieTitle =
-  document.getElementById(
-    'movieTitle'
-  );
-
-const movieId =
-  document.getElementById(
-    'movieId'
-  );
-
-const jsonOutput =
-  document.getElementById(
-    'jsonOutput'
-  );
-
-const message =
-  document.getElementById(
-    'message'
-  );
-
-
-// =====================================================
-// MOVIE DATA
-// =====================================================
-
 let movies = [];
+let streams = {};
+let selectedMovie = null;
 
-let streamDatabase = {};
 
-
-// =====================================================
-// LOAD MOVIES
-// =====================================================
+/* --------------------------------
+   LOAD EVERYTHING
+-------------------------------- */
 
 async function loadMovies() {
 
+  const withLinks =
+    document.getElementById('withLinks');
+
+  const withoutLinks =
+    document.getElementById('withoutLinks');
+
+  withLinks.innerHTML =
+    '<div class="hm-loading">Loading movies...</div>';
+
+  withoutLinks.innerHTML =
+    '<div class="hm-loading">Loading movies...</div>';
+
   try {
 
-    const response =
-      await fetch(
-        LATEST_API,
-        {
-          cache: 'no-store'
-        }
-      );
+    const [
+      moviesResponse,
+      streamsResponse
+    ] = await Promise.all([
 
-    if (!response.ok) {
+      fetch(
+        LATEST_API + '?t=' + Date.now()
+      ),
 
+      fetch(
+        API + '/streams?t=' + Date.now()
+      )
+
+    ]);
+
+
+    if (!moviesResponse.ok) {
       throw new Error(
         'Unable to load latest.json'
       );
-
     }
 
-    movies =
-      await response.json();
 
-
-    movieSelect.innerHTML = `
-      <option value="">
-        Select a movie...
-      </option>
-    `;
-
-
-    movies.forEach(function(movie) {
-
-      const option =
-        document.createElement(
-          'option'
-        );
-
-      option.value =
-        movie.id;
-
-      option.textContent =
-        movie.id;
-
-      option.dataset.tmdb =
-        movie.tmdb_id;
-
-      movieSelect.appendChild(
-        option
+    if (!streamsResponse.ok) {
+      throw new Error(
+        'Unable to load streams.json'
       );
+    }
 
-    });
+
+    movies =
+      await moviesResponse.json();
+
+    streams =
+      await streamsResponse.json();
 
 
-    showMessage(
-      'Movies loaded successfully.',
-      'success'
-    );
+    renderMovies();
 
 
   } catch (error) {
 
     console.error(error);
 
-    movieSelect.innerHTML = `
-      <option value="">
-        Failed to load movies
-      </option>
+    withLinks.innerHTML = `
+      <div class="hm-empty">
+        ${escapeHtml(error.message)}
+      </div>
     `;
 
-    showMessage(
-      'Could not load latest.json.',
+    withoutLinks.innerHTML = '';
+
+  }
+
+}
+
+
+/* --------------------------------
+   RENDER MOVIES
+-------------------------------- */
+
+function renderMovies() {
+
+  const withLinks =
+    document.getElementById('withLinks');
+
+  const withoutLinks =
+    document.getElementById('withoutLinks');
+
+  withLinks.innerHTML = '';
+  withoutLinks.innerHTML = '';
+
+
+  let withCount = 0;
+  let withoutCount = 0;
+
+
+  movies.forEach(movie => {
+
+    const movieStream =
+      streams[movie.id];
+
+
+    const hasLinks =
+      movieStream &&
+      Object.values(movieStream).some(server =>
+        server &&
+        server.url &&
+        server.url.trim() !== ''
+      );
+
+
+    const card =
+      createMovieCard(
+        movie,
+        movieStream,
+        hasLinks
+      );
+
+
+    if (hasLinks) {
+
+      withLinks.appendChild(card);
+      withCount++;
+
+    } else {
+
+      withoutLinks.appendChild(card);
+      withoutCount++;
+
+    }
+
+  });
+
+
+  document.getElementById('withCount').textContent =
+    withCount;
+
+  document.getElementById('withoutCount').textContent =
+    withoutCount;
+
+
+  if (!withCount) {
+
+    withLinks.innerHTML = `
+      <div class="hm-empty">
+        No movies have stream links yet.
+      </div>
+    `;
+
+  }
+
+
+  if (!withoutCount) {
+
+    withoutLinks.innerHTML = `
+      <div class="hm-empty">
+        All movies have stream links.
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* --------------------------------
+   CREATE MOVIE CARD
+-------------------------------- */
+
+function createMovieCard(
+  movie,
+  movieStream,
+  hasLinks
+) {
+
+  const card =
+    document.createElement('div');
+
+  card.className =
+    'hm-movie';
+
+
+  const info =
+    document.createElement('div');
+
+  info.className =
+    'hm-movie-info';
+
+
+  const title =
+    document.createElement('div');
+
+  title.className =
+    'hm-movie-title';
+
+  title.textContent =
+    movie.id;
+
+
+  const id =
+    document.createElement('div');
+
+  id.className =
+    'hm-movie-id';
+
+  id.textContent =
+    'TMDB ID: ' +
+    movie.tmdb_id;
+
+
+  const servers =
+    document.createElement('div');
+
+  servers.className =
+    'hm-servers';
+
+
+  for (
+    let i = 1;
+    i <= 3;
+    i++
+  ) {
+
+    const server =
+      movieStream &&
+      movieStream['server' + i];
+
+
+    const active =
+      server &&
+      server.url &&
+      server.url.trim() !== '';
+
+
+    const badge =
+      document.createElement('span');
+
+    badge.className =
+      'hm-server-status' +
+      (active ? ' active' : '');
+
+    badge.textContent =
+      active
+        ? '✓ Server ' + i
+        : '— Server ' + i;
+
+
+    servers.appendChild(badge);
+
+  }
+
+
+  info.appendChild(title);
+  info.appendChild(id);
+  info.appendChild(servers);
+
+
+  const button =
+    document.createElement('button');
+
+  button.className =
+    'hm-action';
+
+  button.textContent =
+    hasLinks
+      ? 'Edit'
+      : 'Add Links';
+
+
+  button.onclick =
+    () => openEditor(movie);
+
+
+  card.appendChild(info);
+  card.appendChild(button);
+
+
+  return card;
+
+}
+
+
+/* --------------------------------
+   OPEN EDITOR
+-------------------------------- */
+
+function openEditor(movie) {
+
+  selectedMovie =
+    movie;
+
+
+  document.getElementById(
+    'editorTitle'
+  ).textContent =
+    movie.id;
+
+
+  const container =
+    document.getElementById(
+      'serverFields'
+    );
+
+
+  container.innerHTML = '';
+
+
+  const movieStream =
+    streams[movie.id] || {};
+
+
+  for (
+    let i = 1;
+    i <= 3;
+    i++
+  ) {
+
+    const server =
+      movieStream['server' + i] || {
+
+        name:
+          'Server ' + i,
+
+        type:
+          i === 3
+            ? 'm3u8'
+            : 'iframe',
+
+        url:
+          ''
+
+      };
+
+
+    const box =
+      document.createElement('div');
+
+    box.className =
+      'hm-server-box';
+
+
+    box.innerHTML = `
+
+      <h3>
+        Server ${i}
+      </h3>
+
+      <div class="hm-fields">
+
+        <div class="hm-field">
+
+          <label>
+            Server Name
+          </label>
+
+          <input
+            id="server${i}Name"
+            type="text"
+            value="${escapeAttr(server.name || '')}"
+            placeholder="Server ${i}"
+          >
+
+        </div>
+
+
+        <div class="hm-field">
+
+          <label>
+            Stream Type
+          </label>
+
+          <select
+            id="server${i}Type">
+
+            <option
+              value="iframe"
+              ${server.type === 'iframe' ? 'selected' : ''}>
+              iframe
+            </option>
+
+            <option
+              value="m3u8"
+              ${server.type === 'm3u8' ? 'selected' : ''}>
+              m3u8
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="hm-field">
+
+          <label>
+            Stream URL
+          </label>
+
+          <input
+            id="server${i}Url"
+            type="url"
+            value="${escapeAttr(server.url || '')}"
+            placeholder="https://..."
+          >
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    container.appendChild(box);
+
+  }
+
+
+  document
+    .getElementById('editor')
+    .classList.add('active');
+
+
+  document
+    .getElementById('editor')
+    .scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+}
+
+
+/* --------------------------------
+   CLOSE EDITOR
+-------------------------------- */
+
+function closeEditor() {
+
+  selectedMovie =
+    null;
+
+  document
+    .getElementById('editor')
+    .classList.remove('active');
+
+}
+
+
+/* --------------------------------
+   SAVE STREAMS
+-------------------------------- */
+
+async function saveStreams() {
+
+  if (!selectedMovie) {
+    return;
+  }
+
+
+  const saveButton =
+    document.getElementById(
+      'saveButton'
+    );
+
+
+  const updatedMovie = {};
+
+
+  for (
+    let i = 1;
+    i <= 3;
+    i++
+  ) {
+
+    updatedMovie[
+      'server' + i
+    ] = {
+
+      name:
+        document.getElementById(
+          'server' + i + 'Name'
+        ).value.trim()
+        ||
+        'Server ' + i,
+
+      type:
+        document.getElementById(
+          'server' + i + 'Type'
+        ).value,
+
+      url:
+        document.getElementById(
+          'server' + i + 'Url'
+        ).value.trim()
+
+    };
+
+  }
+
+
+  streams[selectedMovie.id] =
+    updatedMovie;
+
+
+  saveButton.disabled =
+    true;
+
+  saveButton.textContent =
+    'Saving...';
+
+
+  showStatus(
+    'Saving stream data...',
+    ''
+  );
+
+
+  try {
+
+    const response =
+      await fetch(
+        API + '/admin/streams',
+        {
+
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(streams)
+
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        result.error ||
+        'Failed to save streams'
+      );
+
+    }
+
+
+    showStatus(
+      '✓ Streams saved successfully.',
+      'success'
+    );
+
+
+    renderMovies();
+
+    closeEditor();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    showStatus(
+      error.message,
       'error'
     );
 
   }
 
-}
 
+  saveButton.disabled =
+    false;
 
-// =====================================================
-// MOVIE SELECT
-// =====================================================
-
-movieSelect.addEventListener(
-  'change',
-  function() {
-
-    const selectedId =
-      movieSelect.value;
-
-    if (!selectedId) {
-
-      movieInfo.style.display =
-        'none';
-
-      clearServerFields();
-
-      return;
-
-    }
-
-
-    const movie =
-      movies.find(function(item) {
-
-        return String(item.id) ===
-          String(selectedId);
-
-      });
-
-
-    if (!movie) {
-      return;
-    }
-
-
-    movieInfo.style.display =
-      'flex';
-
-
-    movieTitle.textContent =
-      movie.id;
-
-
-    movieId.textContent =
-      'Movie ID: ' +
-      movie.id +
-      ' • TMDB ID: ' +
-      movie.tmdb_id;
-
-
-    moviePoster.src =
-      movie.tmdb_id
-        ? 'https://image.tmdb.org/t/p/w185' +
-          '/placeholder'
-        : '';
-
-
-    /*
-      We don't expose the TMDB token here.
-      Poster is optional in this manager.
-    */
-
-
-    loadExistingStreams(
-      movie.id
-    );
-
-  }
-);
-
-
-// =====================================================
-// LOAD EXISTING STREAMS
-// =====================================================
-
-function loadExistingStreams(id) {
-
-  const existing =
-    streamDatabase[id];
-
-  if (!existing) {
-
-    clearServerFields();
-
-    return;
-
-  }
-
-
-  setServer(
-    1,
-    existing.server1
-  );
-
-  setServer(
-    2,
-    existing.server2
-  );
-
-  setServer(
-    3,
-    existing.server3
-  );
+  saveButton.textContent =
+    'Save Streams';
 
 }
 
 
-// =====================================================
-// SET SERVER
-// =====================================================
-
-function setServer(
-  number,
-  server
-) {
-
-  const type =
-    document.getElementById(
-      'server' +
-      number +
-      'Type'
-    );
-
-  const url =
-    document.getElementById(
-      'server' +
-      number +
-      'Url'
-    );
-
-
-  if (!server) {
-
-    type.value =
-      'iframe';
-
-    url.value =
-      '';
-
-    updateServerStatus(
-      number,
-      false
-    );
-
-    return;
-
-  }
-
-
-  type.value =
-    server.type ||
-    'iframe';
-
-  url.value =
-    server.url ||
-    '';
-
-  updateServerStatus(
-    number,
-    Boolean(server.url)
-  );
-
-}
-
-
-// =====================================================
-// CLEAR
-// =====================================================
-
-function clearServerFields() {
-
-  for (
-    let number = 1;
-    number <= 3;
-    number++
-  ) {
-
-    document.getElementById(
-      'server' +
-      number +
-      'Type'
-    ).value =
-      'iframe';
-
-    document.getElementById(
-      'server' +
-      number +
-      'Url'
-    ).value =
-      '';
-
-    updateServerStatus(
-      number,
-      false
-    );
-
-  }
-
-  jsonOutput.value =
-    '';
-
-}
-
-
-// =====================================================
-// GENERATE
-// =====================================================
-
-document.getElementById(
-  'generateBtn'
-).addEventListener(
-  'click',
-  function() {
-
-    const selectedId =
-      movieSelect.value;
-
-    if (!selectedId) {
-
-      showMessage(
-        'Please select a movie first.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    const movieStreams = {};
-
-
-    for (
-      let number = 1;
-      number <= 3;
-      number++
-    ) {
-
-      const type =
-        document.getElementById(
-          'server' +
-          number +
-          'Type'
-        ).value;
-
-      const url =
-        document.getElementById(
-          'server' +
-          number +
-          'Url'
-        ).value.trim();
-
-
-      if (url) {
-
-        movieStreams[
-          'server' + number
-        ] = {
-
-          name:
-            'Server ' +
-            number,
-
-          type:
-            type,
-
-          url:
-            url
-
-        };
-
-      }
-
-    }
-
-
-    streamDatabase[
-      selectedId
-    ] =
-      movieStreams;
-
-
-    const output =
-      {};
-
-    output[
-      selectedId
-    ] =
-      movieStreams;
-
-
-    jsonOutput.value =
-      JSON.stringify(
-        output,
-        null,
-        2
-      );
-
-
-    for (
-      let number = 1;
-      number <= 3;
-      number++
-    ) {
-
-      updateServerStatus(
-        number,
-        Boolean(
-          movieStreams[
-            'server' + number
-          ]
-        )
-      );
-
-    }
-
-
-    showMessage(
-      'Stream data generated successfully.',
-      'success'
-    );
-
-  }
-);
-
-
-// =====================================================
-// COPY
-// =====================================================
-
-document.getElementById(
-  'copyBtn'
-).addEventListener(
-  'click',
-  async function() {
-
-    if (!jsonOutput.value) {
-
-      showMessage(
-        'Generate the stream data first.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    try {
-
-      await navigator.clipboard.writeText(
-        jsonOutput.value
-      );
-
-      showMessage(
-        'JSON copied to clipboard.',
-        'success'
-      );
-
-    } catch (error) {
-
-      jsonOutput.select();
-
-      document.execCommand(
-        'copy'
-      );
-
-      showMessage(
-        'JSON copied.',
-        'success'
-      );
-
-    }
-
-  }
-);
-
-
-// =====================================================
-// DOWNLOAD
-// =====================================================
-
-document.getElementById(
-  'downloadBtn'
-).addEventListener(
-  'click',
-  function() {
-
-    if (!jsonOutput.value) {
-
-      showMessage(
-        'Generate the stream data first.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    const blob =
-      new Blob(
-        [
-          JSON.stringify(
-            streamDatabase,
-            null,
-            2
-          )
-        ],
-        {
-          type:
-            'application/json'
-        }
-      );
-
-
-    const url =
-      URL.createObjectURL(
-        blob
-      );
-
-
-    const link =
-      document.createElement(
-        'a'
-      );
-
-    link.href =
-      url;
-
-    link.download =
-      'streams.json';
-
-    document.body.appendChild(
-      link
-    );
-
-    link.click();
-
-    link.remove();
-
-    URL.revokeObjectURL(
-      url
-    );
-
-
-    showMessage(
-      'streams.json downloaded.',
-      'success'
-    );
-
-  }
-);
-
-
-// =====================================================
-// CLEAR BUTTON
-// =====================================================
-
-document.getElementById(
-  'clearBtn'
-).addEventListener(
-  'click',
-  function() {
-
-    if (
-      !confirm(
-        'Clear the current server information?'
-      )
-    ) {
-      return;
-    }
-
-    clearServerFields();
-
-    showMessage(
-      'Server fields cleared.',
-      'success'
-    );
-
-  }
-);
-
-
-// =====================================================
-// STATUS
-// =====================================================
-
-function updateServerStatus(
-  number,
-  active
+/* --------------------------------
+   STATUS MESSAGE
+-------------------------------- */
+
+function showStatus(
+  message,
+  type
 ) {
 
   const status =
     document.getElementById(
-      'server' +
-      number +
-      'Status'
+      'status'
     );
 
 
-  if (active) {
+  status.textContent =
+    message;
 
-    status.textContent =
-      'Configured';
 
-    status.style.color =
-      '#70ff91';
-
-  } else {
-
-    status.textContent =
-      'Empty';
-
-    status.style.color =
-      '#777';
-
-  }
+  status.className =
+    'hm-status show ' +
+    (type || '');
 
 }
 
 
-// =====================================================
-// MESSAGE
-// =====================================================
+/* --------------------------------
+   HTML ESCAPING
+-------------------------------- */
 
-function showMessage(
-  text,
-  type
-) {
+function escapeHtml(value) {
 
-  message.textContent =
-    text;
-
-  message.className =
-    'hm-message ' +
-    type;
-
-  setTimeout(
-    function() {
-
-      message.className =
-        'hm-message';
-
-    },
-    3500
-  );
+  return String(value)
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
+    );
 
 }
 
 
-// =====================================================
-// START
-// =====================================================
+function escapeAttr(value) {
 
-loadMovies();
+  return escapeHtml(value);
 
+}
+
+
+/* --------------------------------
+   START
+-------------------------------- */
+
+document.addEventListener(
+  'DOMContentLoaded',
+  loadMovies
+);
+
+//]]>
 </script>
 
 </body>
