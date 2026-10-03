@@ -32,5 +32,22 @@
       "type": "m3u8",
       "url": ""
     }
+  },
+  "drishyam-the-conclusion": {
+    "server1": {
+      "name": "Server 1",
+      "type": "iframe",
+      "url": "https://wicket-goal.pages.dev/htstar/"
+    },
+    "server2": {
+      "name": "Server 2",
+      "type": "iframe",
+      "url": ""
+    },
+    "server3": {
+      "name": "Server 3",
+      "type": "m3u8",
+      "url": ""
+    }
   }
 }
